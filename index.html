@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Our Family Pets</title>
+  <title>Our Dogs</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
 
@@ -22,10 +22,12 @@
     }
 
     .icon-grid {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr); /* 3 per row */
       gap: 30px;
+      justify-items: center;
+      max-width: 800px;
+      margin: 0 auto;
     }
 
     .icon {
@@ -39,6 +41,11 @@
       border-radius: 50%;
       border: 2px solid #ccc;
       box-shadow: 2px 2px 10px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .icon img:hover {
+      transform: scale(1.05);
     }
 
     .icon p {
@@ -54,24 +61,24 @@
   </style>
 </head>
 <body>
-  <h1>🐾 Our Family Pets 🐾</h1>
+  <h1>🐶 Our Dogs 🐶</h1>
 
   <div class="icon-grid">
-  <a href="coco.html" class="icon"><img src="https://via.placeholder.com/100?text=Coco"><p>Coco</p></a>
-  <a href="luna.html" class="icon"><img src="https://via.placeholder.com/100?text=Luna"><p>Luna</p></a>
-  <a href="chichi.html" class="icon"><img src="https://via.placeholder.com/100?text=Chichi"><p>Chichi</p></a>
-  <a href="sandy.html" class="icon"><img src="https://via.placeholder.com/100?text=Sandy"><p>Sandy</p></a>
-  <a href="toto.html" class="icon"><img src="https://via.placeholder.com/100?text=Toto"><p>Toto</p></a>
-  <a href="lily.html" class="icon"><img src="https://via.placeholder.com/100?text=Lily"><p>Lily</p></a>
-  <a href="snowy.html" class="icon"><img src="https://via.placeholder.com/100?text=Snowy"><p>Snowy</p></a>
-  <a href="nina.html" class="icon"><img src="https://via.placeholder.com/100?text=Nina"><p>Nina</p></a>
-  <a href="oreo.html" class="icon"><img src="https://via.placeholder.com/100?text=Oreo"><p>Oreo</p></a>
-  <a href="birdy.html" class="icon"><img src="https://via.placeholder.com/100?text=Birdy"><p>Birdy</p></a>
-  <a href="hedge.html" class="icon"><img src="https://via.placeholder.com/100?text=Hedge"><p>Hedge</p></a>
-</div>
+    <a href="maxine.html" class="icon"><img src="https://via.placeholder.com/100?text=Maxine"><p>Maxine</p></a>
+    <a href="inday.html" class="icon"><img src="https://via.placeholder.com/100?text=Inday"><p>Inday</p></a>
+    <a href="kooper.html" class="icon"><img src="https://via.placeholder.com/100?text=Kooper"><p>Kooper</p></a>
+
+    <a href="kendra.html" class="icon"><img src="https://via.placeholder.com/100?text=Kendra"><p>Kendra</p></a>
+    <a href="hulkie.html" class="icon"><img src="https://via.placeholder.com/100?text=Hulkie"><p>Hulkie</p></a>
+    <a href="marley.html" class="icon"><img src="https://via.placeholder.com/100?text=Marley"><p>Marley</p></a>
+
+    <a href="kuma.html" class="icon"><img src="https://via.placeholder.com/100?text=Kuma"><p>Kuma</p></a>
+    <a href="inka.html" class="icon"><img src="https://via.placeholder.com/100?text=Inka"><p>Inka</p></a>
+    <a href="kuri.html" class="icon"><img src="https://via.placeholder.com/100?text=Kuri"><p>Kuri</p></a>
+  </div>
 
   <footer>
-    Made with ❤️ by Sihaya & Fam
+    Made with ❤️ by Sihaya & Pack
   </footer>
 </body>
 </html>
