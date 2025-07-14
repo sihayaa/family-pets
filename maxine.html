@@ -11,43 +11,45 @@
       margin: 0;
       padding: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #fff0f5, #fde2ff, #ffe9ec);
-      background-size: 300% 300%;
-      animation: gradientShift 15s ease infinite;
+      background: url('https://github.com/sihayaa/family-pets/blob/main/maxine2.jpg?raw=true') no-repeat center center fixed;
+      background-size: cover;
       color: #4b2354;
       text-align: center;
     }
 
-    @keyframes gradientShift {
-      0% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-      100% { background-position: 0% 50%; }
+    h1 {
+      font-size: 2.8em;
+      margin-top: 60px;
+      font-family: 'Freestyle Script', cursive;
+      color: #d1791b;
+      text-shadow: 2px 2px 4px #00000050;
     }
 
-    h1 {
-      font-size: 2.5em;
-      margin-top: 40px;
-      font-family: 'Freestyle Script', cursive;
+    h1::after {
+      content: ' 🐾';
     }
 
     .back-button {
       display: inline-block;
-      margin-top: 20px;
+      margin-top: 25px;
       padding: 10px 20px;
-      background: #d2b4de;
+      background: #f4c390;
       color: white;
       border-radius: 10px;
       text-decoration: none;
       font-weight: bold;
       transition: background 0.3s ease;
+      position: absolute;
+      top: 20px;
+      left: 20px;
     }
 
     .back-button:hover {
-      background: #b085c6;
+      background: #e39d4f;
     }
 
     .upload-section {
-      margin-top: 30px;
+      margin-top: 40px;
       display: flex;
       justify-content: center;
       gap: 15px;
@@ -58,8 +60,8 @@
     .custom-button {
       font-family: 'Freestyle Script', cursive;
       font-size: 1.2em;
-      color: #a7d33a;
-      background: linear-gradient(to bottom, #6a4c93, #5c3d85);
+      color: #fff4dd;
+      background: linear-gradient(to bottom, #e07c24, #b55c11);
       border: none;
       border-radius: 40px;
       padding: 10px 25px;
@@ -69,7 +71,7 @@
     }
 
     .custom-button:hover {
-      box-shadow: 0 0 15px rgba(255, 105, 180, 0.7);
+      box-shadow: 0 0 12px rgba(255, 145, 0, 0.7);
     }
 
     .caption-input {
@@ -100,8 +102,8 @@
     }
 
     .photo-block {
-      background: white;
-      border: 3px solid #eee;
+      background: rgba(255, 255, 255, 0.95);
+      border: 3px solid #ffe5c4;
       border-radius: 12px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       padding: 10px;
@@ -117,14 +119,14 @@
       height: 220px;
       object-fit: contain;
       border-radius: 8px;
-      background-color: #f0f0f0;
+      background-color: #fff2e0;
       cursor: pointer;
     }
 
     .photo-block p {
       font-family: 'Great Vibes', cursive;
       font-size: 1.6em;
-      color: #8628ac;
+      color: #cc5c00;
       margin-top: 8px;
       text-shadow: 0 1px 1px #fff;
     }
@@ -161,14 +163,14 @@
 </head>
 <body>
   <a href="index.html" class="back-button">← Back to Home</a>
-  <h1>Maxine's Memories 🐾</h1>
+  <h1>Maxine's Memories</h1>
 
   <div class="upload-section">
     <label for="upload" class="custom-button">📷 Pick a Photo</label>
     <input type="file" id="upload" accept="image/*" style="display:none">
     <span class="file-name" id="fileName">No file chosen</span>
     <input type="text" id="caption" placeholder="Maxine’s moment..." class="caption-input">
-    <button id="uploadBtn" class="custom-button">💞 Save it</button>
+    <button id="uploadBtn" class="custom-button">🧡 Save it</button>
   </div>
 
   <div class="gallery" id="gallery"></div>
@@ -284,3 +286,4 @@
   </script>
 </body>
 </html>
+
