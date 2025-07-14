@@ -6,7 +6,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Freestyle+Script&display=swap" rel="stylesheet">
-
   <style>
     body {
       margin: 0;
@@ -16,7 +15,6 @@
       background-size: cover;
       color: #4b2354;
     }
-
     .overlay {
       background: rgba(255, 255, 255, 0.2);
       backdrop-filter: blur(4px);
@@ -26,7 +24,6 @@
       text-align: center;
       position: relative;
     }
-
     .back-button {
       position: absolute;
       top: 20px;
@@ -38,11 +35,9 @@
       border-radius: 10px;
       font-weight: bold;
     }
-
     .back-button:hover {
       background: #c9a4d6;
     }
-
     h1.title {
       font-family: 'Freestyle Script', cursive;
       font-size: 4em;
@@ -51,16 +46,17 @@
       margin-bottom: 0;
       margin-top: 40px;
     }
-
     .intro {
       font-size: 1.3em;
       margin-bottom: 30px;
     }
-
-    input[type="file"] {
+    input[type="file"], input[type="text"] {
       margin-top: 15px;
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      width: 250px;
     }
-
     button {
       font-family: 'Patrick Hand', cursive;
       background-color: #b68fd2;
@@ -70,43 +66,62 @@
       border-radius: 8px;
       cursor: pointer;
       margin-top: 10px;
+      margin-left: 5px;
     }
-
     button:hover {
       background-color: #a477c4;
     }
-
     h3 {
       margin-top: 30px;
       margin-bottom: 10px;
     }
-
     #gallery {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       margin-top: 20px;
     }
-
-    #gallery img {
-      width: 120px;
-      margin: 8px;
-      border-radius: 10px;
+    .photo-card {
+      position: relative;
+      background: rgba(255, 255, 255, 0.85);
+      border-radius: 12px;
+      padding: 10px;
+      margin: 10px;
+      width: 160px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      text-align: center;
+      font-size: 0.9em;
+    }
+    .photo-card img {
+      width: 140px;
+      height: 120px;
       object-fit: cover;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.2);
+      border-radius: 8px;
+      margin-bottom: 6px;
+    }
+    .photo-card .actions {
+      margin-top: 5px;
+    }
+    .photo-card .actions button {
+      font-size: 14px;
+      padding: 4px 8px;
+    }
+    .timestamp {
+      font-size: 0.75em;
+      color: #555;
+      margin-top: 4px;
     }
   </style>
 </head>
 <body>
   <div class="overlay">
     <a class="back-button" href="index.html">← Back to Home</a>
-
     <h1 class="title">Maxine</h1>
-    <p class="intro">2008/02/24 • Female<br>
-    eat, sleep, poop, sleep, eat, drink water, sleep, eat, poop, sleep, eat, sleep…</p>
+    <p class="intro">2008/02/24 • Female<br>eat, sleep, poop, sleep, eat, drink water, sleep, eat, poop, sleep, eat, sleep…</p>
 
-    <h3>📸 Upload a New Photo of Maxine</h3>
+    <h3>📸 Upload a New Photo</h3>
     <input type="file" id="fileInput"><br>
+    <input type="text" id="captionInput" placeholder="Add a caption..."><br>
     <button onclick="uploadPhoto()">Upload</button>
 
     <h3>🖼️ Gallery</h3>
@@ -116,39 +131,98 @@
   <script>
     const supabase = supabase.createClient(
       "https://ceuapgdsrztwkstlsooa.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldWFwZ2Rzcnp0d2tzdGxzb29hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0MzgyOTMsImV4cCI6MjA2ODAxNDI5M30.tIiGVyEPw1WEUgBCtOnXIPU4mn7yJpZ7jiPXPmBjVY8"
+      "YOUR_SUPABASE_PUBLIC_ANON_KEY"
     );
 
     const bucket = "dog-photos";
-    const folder = "maxine";
+    const petName = "maxine"; // 👈 update this when you make pages for other pets
 
     async function uploadPhoto() {
       const fileInput = document.getElementById('fileInput');
+      const captionInput = document.getElementById('captionInput');
       const file = fileInput.files[0];
+      const caption = captionInput.value;
+
       if (!file) return alert("Please choose a file");
 
-      const filePath = `${folder}/${Date.now()}_${file.name}`;
+      const filePath = `${petName}/${Date.now()}_${file.name}`;
 
-      const { error } = await supabase.storage.from(bucket).upload(filePath, file);
-      if (error) {
+      const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file);
+      if (uploadError) {
         alert("Upload failed!");
-        console.error(error);
+        console.error(uploadError);
+        return;
+      }
+
+      const { error: insertError } = await supabase
+        .from("dog_photos")
+        .insert([{ file_name: filePath, caption, pet_name: petName }]);
+
+      if (insertError) {
+        alert("Caption save failed!");
+        console.error(insertError);
       } else {
         alert("Photo uploaded!");
+        fileInput.value = "";
+        captionInput.value = "";
         loadGallery();
       }
     }
 
     async function loadGallery() {
-      const { data, error } = await supabase.storage.from(bucket).list(folder);
+      const { data, error } = await supabase
+        .from("dog_photos")
+        .select("*")
+        .eq("pet_name", petName)
+        .order("uploaded_at", { ascending: false });
+
       const gallery = document.getElementById("gallery");
       gallery.innerHTML = "";
 
       if (data) {
-        data.forEach(file => {
-          const url = `https://ceuapgdsrztwkstlsooa.supabase.co/storage/v1/object/public/${bucket}/${folder}/${file.name}`;
-          gallery.innerHTML += `<img src="${url}" alt="Maxine photo">`;
+        data.forEach(photo => {
+          const url = `https://ceuapgdsrztwkstlsooa.supabase.co/storage/v1/object/public/${bucket}/${photo.file_name}`;
+          const date = new Date(photo.uploaded_at).toLocaleString();
+
+          const div = document.createElement("div");
+          div.className = "photo-card";
+
+          div.innerHTML = `
+            <img src="${url}" alt="photo">
+            <div><strong>${photo.caption || 'No caption'}</strong></div>
+            <div class="timestamp">${date}</div>
+            <div class="actions">
+              <button onclick="editCaption(${photo.id}, \`${photo.caption || ''}\`)">✏️</button>
+              <button onclick="deletePhoto('${photo.file_name}', ${photo.id})">🗑️</button>
+            </div>
+          `;
+
+          gallery.appendChild(div);
         });
+      }
+    }
+
+    async function deletePhoto(fileName, id) {
+      const { error: storageErr } = await supabase.storage.from(bucket).remove([fileName]);
+      const { error: dbErr } = await supabase.from("dog_photos").delete().eq("id", id);
+
+      if (storageErr || dbErr) {
+        alert("Delete failed!");
+        console.error(storageErr || dbErr);
+      } else {
+        alert("Photo deleted!");
+        loadGallery();
+      }
+    }
+
+    function editCaption(id, oldCaption) {
+      const newCaption = prompt("Edit caption:", oldCaption);
+      if (newCaption !== null) {
+        supabase
+          .from("dog_photos")
+          .update({ caption: newCaption })
+          .eq("id", id)
+          .then(() => loadGallery());
       }
     }
 
