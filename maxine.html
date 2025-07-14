@@ -4,12 +4,13 @@
   <meta charset="UTF-8">
   <title>Maxine's Album</title>
 
-  <!-- ✅ Supabase JS -->
+  <!-- Supabase + Drag Sort -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
-  <!-- styling & fonts -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Freestyle+Script&display=swap" rel="stylesheet">
+
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Freestyle+Script&family=Fredoka&display=swap" rel="stylesheet">
+
   <style>
     body {
       margin: 0;
@@ -61,11 +62,16 @@
       align-items: center;
     }
 
+    .custom-button,
+    .caption-input,
+    .file-name {
+      font-family: 'Fredoka', sans-serif;
+    }
+
     .custom-button {
-      font-family: 'Freestyle Script', cursive;
-      font-size: 1.2em;
+      font-size: 1.1em;
       color: #fff4dd;
-      background: linear-gradient(to bottom, #e07c24, #b55c11);
+      background: linear-gradient(to bottom, #cc6515, #a44800); /* darker orange */
       border: none;
       border-radius: 40px;
       padding: 10px 25px;
@@ -79,8 +85,7 @@
     }
 
     .caption-input {
-      font-family: 'Freestyle Script', cursive;
-      font-size: 1.2em;
+      font-size: 1.1em;
       color: black;
       background: white;
       border: none;
@@ -90,10 +95,9 @@
     }
 
     .file-name {
-      font-family: 'Freestyle Script', cursive;
-      font-size: 1.1em;
-      margin-top: 8px;
+      font-size: 1em;
       color: #4b2354;
+      margin-top: 8px;
     }
 
     .gallery {
