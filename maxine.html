@@ -129,104 +129,123 @@
   </div>
 
   <script>
-    const supabase = supabase.createClient(
-      "https://ceuapgdsrztwkstlsooa.supabase.co",
-      "YOUR_SUPABASE_PUBLIC_ANON_KEY"
-    );
+  const supabase = supabase.createClient(
+    "https://ceuapgdsrztwkstlsooa.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldWFwZ2Rzcnp0d2tzdGxzb29hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0MzgyOTMsImV4cCI6MjA2ODAxNDI5M30.tIiGVyEPw1WEUgBCtOnXIPU4mn7yJpZ7jiPXPmBjVY8"
+  );
 
-    const bucket = "dog-photos";
-    const petName = "maxine"; // 👈 update this when you make pages for other pets
+  const bucket = "dog-photos";
+  const petName = "maxine";
 
-    async function uploadPhoto() {
-      const fileInput = document.getElementById('fileInput');
-      const captionInput = document.getElementById('captionInput');
-      const file = fileInput.files[0];
-      const caption = captionInput.value;
+  async function uploadPhoto() {
+    const fileInput = document.getElementById('fileInput');
+    const captionInput = document.getElementById('captionInput');
+    const file = fileInput.files[0];
+    const caption = captionInput.value;
 
-      if (!file) return alert("Please choose a file");
-
-      const filePath = `${petName}/${Date.now()}_${file.name}`;
-
-      const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file);
-      if (uploadError) {
-        alert("Upload failed!");
-        console.error(uploadError);
-        return;
-      }
-
-      const { error: insertError } = await supabase
-        .from("dog_photos")
-        .insert([{ file_name: filePath, caption, pet_name: petName }]);
-
-      if (insertError) {
-        alert("Caption save failed!");
-        console.error(insertError);
-      } else {
-        alert("Photo uploaded!");
-        fileInput.value = "";
-        captionInput.value = "";
-        loadGallery();
-      }
+    if (!file) {
+      alert("Please choose a file");
+      return;
     }
 
-    async function loadGallery() {
-      const { data, error } = await supabase
+    const filePath = `${petName}/${Date.now()}_${file.name}`;
+    console.log("Uploading file to:", filePath);
+
+    const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file);
+
+    if (uploadError) {
+      alert("Upload to storage failed!");
+      console.error("Storage error:", uploadError);
+      return;
+    }
+
+    console.log("Upload successful. Inserting into DB...");
+
+    const { error: insertError } = await supabase
+      .from("dog_photos")
+      .insert([{ file_name: filePath, caption, pet_name: petName }]);
+
+    if (insertError) {
+      alert("Insert into database failed!");
+      console.error("Insert error:", insertError);
+    } else {
+      alert("Photo uploaded and saved!");
+      fileInput.value = "";
+      captionInput.value = "";
+      loadGallery();
+    }
+  }
+
+  async function loadGallery() {
+    console.log("Loading gallery for:", petName);
+    const { data, error } = await supabase
+      .from("dog_photos")
+      .select("*")
+      .eq("pet_name", petName)
+      .order("uploaded_at", { ascending: false });
+
+    const gallery = document.getElementById("gallery");
+    gallery.innerHTML = "";
+
+    if (error) {
+      console.error("Gallery load error:", error);
+      return;
+    }
+
+    if (data && data.length === 0) {
+      console.log("No photos found.");
+    }
+
+    data.forEach(photo => {
+      const url = `https://ceuapgdsrztwkstlsooa.supabase.co/storage/v1/object/public/${bucket}/${photo.file_name}`;
+      const date = new Date(photo.uploaded_at).toLocaleString();
+
+      const div = document.createElement("div");
+      div.className = "photo-card";
+
+      div.innerHTML = `
+        <img src="${url}" alt="photo">
+        <div><strong>${photo.caption || 'No caption'}</strong></div>
+        <div class="timestamp">${date}</div>
+        <div class="actions">
+          <button onclick="editCaption(${photo.id}, \`${photo.caption || ''}\`)">✏️</button>
+          <button onclick="deletePhoto('${photo.file_name}', ${photo.id})">🗑️</button>
+        </div>
+      `;
+
+      gallery.appendChild(div);
+    });
+  }
+
+  async function deletePhoto(fileName, id) {
+    console.log("Deleting photo:", fileName);
+    const { error: storageErr } = await supabase.storage.from(bucket).remove([fileName]);
+    const { error: dbErr } = await supabase.from("dog_photos").delete().eq("id", id);
+
+    if (storageErr || dbErr) {
+      alert("Delete failed!");
+      console.error("Delete error:", storageErr || dbErr);
+    } else {
+      alert("Photo deleted!");
+      loadGallery();
+    }
+  }
+
+  function editCaption(id, oldCaption) {
+    const newCaption = prompt("Edit caption:", oldCaption);
+    if (newCaption !== null) {
+      supabase
         .from("dog_photos")
-        .select("*")
-        .eq("pet_name", petName)
-        .order("uploaded_at", { ascending: false });
-
-      const gallery = document.getElementById("gallery");
-      gallery.innerHTML = "";
-
-      if (data) {
-        data.forEach(photo => {
-          const url = `https://ceuapgdsrztwkstlsooa.supabase.co/storage/v1/object/public/${bucket}/${photo.file_name}`;
-          const date = new Date(photo.uploaded_at).toLocaleString();
-
-          const div = document.createElement("div");
-          div.className = "photo-card";
-
-          div.innerHTML = `
-            <img src="${url}" alt="photo">
-            <div><strong>${photo.caption || 'No caption'}</strong></div>
-            <div class="timestamp">${date}</div>
-            <div class="actions">
-              <button onclick="editCaption(${photo.id}, \`${photo.caption || ''}\`)">✏️</button>
-              <button onclick="deletePhoto('${photo.file_name}', ${photo.id})">🗑️</button>
-            </div>
-          `;
-
-          gallery.appendChild(div);
+        .update({ caption: newCaption })
+        .eq("id", id)
+        .then(() => {
+          alert("Caption updated!");
+          loadGallery();
         });
-      }
     }
+  }
+  loadGallery();
+</script>
 
-    async function deletePhoto(fileName, id) {
-      const { error: storageErr } = await supabase.storage.from(bucket).remove([fileName]);
-      const { error: dbErr } = await supabase.from("dog_photos").delete().eq("id", id);
-
-      if (storageErr || dbErr) {
-        alert("Delete failed!");
-        console.error(storageErr || dbErr);
-      } else {
-        alert("Photo deleted!");
-        loadGallery();
-      }
-    }
-
-    function editCaption(id, oldCaption) {
-      const newCaption = prompt("Edit caption:", oldCaption);
-      if (newCaption !== null) {
-        supabase
-          .from("dog_photos")
-          .update({ caption: newCaption })
-          .eq("id", id)
-          .then(() => loadGallery());
-      }
-    }
-
-    loadGallery();
-  </script>
 </body>
 </html>
