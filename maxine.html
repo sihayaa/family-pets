@@ -4,7 +4,10 @@
   <meta charset="UTF-8">
   <title>Maxine's Album</title>
 
-  <!-- Supabase + Drag Sort -->
+  <!-- ✅ mobile responsiveness -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Supabase & Drag Sort -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
@@ -14,7 +17,7 @@
   <style>
     body {
       margin: 0;
-      padding: 0;
+      padding: 20px;
       font-family: 'Segoe UI', sans-serif;
       background: url('https://github.com/sihayaa/family-pets/blob/main/maxine2.jpg?raw=true') no-repeat center center fixed;
       background-size: cover;
@@ -23,7 +26,7 @@
     }
 
     h1 {
-      font-size: 2.8em;
+      font-size: 2.4em;
       margin-top: 60px;
       font-family: 'Freestyle Script', cursive;
       color: #d1791b;
@@ -36,7 +39,7 @@
 
     .back-button {
       display: inline-block;
-      margin-top: 25px;
+      margin-top: 10px;
       padding: 10px 20px;
       background: #f4c390;
       color: white;
@@ -56,10 +59,10 @@
     .upload-section {
       margin-top: 40px;
       display: flex;
-      justify-content: center;
-      gap: 15px;
       flex-wrap: wrap;
-      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 10px;
     }
 
     .custom-button,
@@ -71,13 +74,14 @@
     .custom-button {
       font-size: 1.1em;
       color: #fff4dd;
-      background: linear-gradient(to bottom, #cc6515, #a44800); /* darker orange */
+      background: linear-gradient(to bottom, #cc6515, #a44800);
       border: none;
       border-radius: 40px;
       padding: 10px 25px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
       transition: all 0.3s ease;
       cursor: pointer;
+      max-width: 100%;
     }
 
     .custom-button:hover {
@@ -92,6 +96,7 @@
       border-radius: 40px;
       padding: 10px 25px;
       box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      max-width: 90vw;
     }
 
     .file-name {
@@ -102,9 +107,9 @@
 
     .gallery {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 20px;
-      padding: 30px;
+      padding: 30px 10px;
       justify-items: center;
     }
 
@@ -114,7 +119,8 @@
       border-radius: 12px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
       padding: 10px;
-      width: 200px;
+      width: 100%;
+      max-width: 240px;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -131,9 +137,9 @@
     }
 
     .photo-block p {
-      font-family: 'Quicksand', sans-serif;
-      font-size: 1.6em;
-      color: #b56209;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.1em;
+      color: #d1791b;
       margin-top: 8px;
       text-shadow: 0 1px 1px #fff;
     }
@@ -293,3 +299,4 @@
   </script>
 </body>
 </html>
+
