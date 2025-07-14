@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Maxine</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    body {
+      font-family: 'Patrick Hand', cursive;
+      background: linear-gradient(135deg, #fdfbfa, #e4f6f1);
+      color: #4b2354;
+      padding: 30px;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.2em;
+    }
+
+    img.profile {
+      width: 200px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 50%;
+      margin-bottom: 15px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    }
+
+    input[type="file"] {
+      margin: 15px 0;
+    }
+
+    button {
+      font-family: 'Patrick Hand', cursive;
+      background-color: #b68fd2;
+      color: white;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #a477c4;
+    }
+
+    #gallery img {
+      width: 120px;
+      margin: 8px;
+      border-radius: 10px;
+      object-fit: cover;
+    }
+
+    a.back-button {
+      display: inline-block;
+      margin-top: 20px;
+      padding: 10px 20px;
+      text-decoration: none;
+      background: #d7bde2;
+      color: #4b2354;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+
+    a.back-button:hover {
+      background: #c9a4d6;
+    }
+  </style>
+</head>
+<body>
+  <h1>🐾 Maxine's Page 🐾</h1>
+
+  <img src="https://raw.githubusercontent.com/sihayaa/family-pets/main/maxine.jpg" alt="Maxine" class="profile">
+  <p>Maxine is our little queen 👑 — sweet but sassy! 🐶💜</p>
+
+  <h3>📸 Upload a New Photo of Maxine</h3>
+  <input type="file" id="fileInput">
+  <button onclick="uploadPhoto()">Upload</button>
+
+  <h3>🖼️ Gallery</h3>
+  <div id="gallery"></div>
+
+  <a class="back-button" href="index.html">← Back to Home</a>
+
+  <script>
+    const supabase = supabase.createClient(
+      "https://ceuapgdsrztwkstlsooa.supabase.co",
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldWFwZ2Rzcnp0d2tzdGxzb29hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0MzgyOTMsImV4cCI6MjA2ODAxNDI5M30.tIiGVyEPw1WEUgBCtOnXIPU4mn7yJpZ7jiPXPmBjVY8"
+    );
+
+    const bucket = "dog-photos";
+    const folder = "maxine";
+
+    async function uploadPhoto() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+      if (!file) return alert("Please choose a file");
+
+      const filePath = `${folder}/${Date.now()}_${file.name}`;
+
+      const { error } = await supabase.storage.from(bucket).upload(filePath, file);
+      if (error) {
+        alert("Upload failed!");
+        console.error(error);
+      } else {
+        alert("Photo uploaded!");
+        loadGallery();
+      }
+    }
+
+    async function loadGallery() {
+      const { data, error } = await supabase.storage.from(bucket).list(folder);
+      const gallery = document.getElementById("gallery");
+      gallery.innerHTML = "";
+
+      if (data) {
+        data.forEach(file => {
+          const url = `https://ceuapgdsrztwkstlsooa.supabase.co/storage/v1/object/public/${bucket}/${folder}/${file.name}`;
+          gallery.innerHTML += `<img src="${url}" alt="Maxine photo">`;
+        });
+      }
+    }
+
+    loadGallery();
+  </script>
+</body>
+</html>
