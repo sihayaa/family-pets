@@ -4,17 +4,37 @@
   <meta charset="UTF-8">
   <title>Maxine</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Freestyle+Script&display=swap" rel="stylesheet">
+
   <style>
     body {
+      margin: 0;
+      padding: 0;
       font-family: 'Patrick Hand', cursive;
-      background: linear-gradient(135deg, #fdfbfa, #e4f6f1);
+      background: url('https://raw.githubusercontent.com/sihayaa/family-pets/main/maxine2.jpg') no-repeat center center fixed;
+      background-size: cover;
       color: #4b2354;
-      padding: 30px;
       text-align: center;
     }
 
-    h1 {
-      font-size: 2.2em;
+    .overlay {
+      background: rgba(255, 255, 255, 0.92);
+      padding: 40px 20px;
+      min-height: 100vh;
+    }
+
+    h1.title {
+      font-family: 'Freestyle Script', cursive;
+      font-size: 4em;
+      color: orange;
+      text-shadow: 2px 2px 4px black;
+      margin-bottom: 0;
+    }
+
+    .intro {
+      font-size: 1.3em;
+      margin-bottom: 30px;
     }
 
     img.profile {
@@ -22,12 +42,12 @@
       height: 200px;
       object-fit: cover;
       border-radius: 50%;
-      margin-bottom: 15px;
+      margin: 20px 0;
       box-shadow: 0 2px 10px rgba(0,0,0,0.2);
     }
 
     input[type="file"] {
-      margin: 15px 0;
+      margin-top: 15px;
     }
 
     button {
@@ -38,10 +58,23 @@
       padding: 8px 16px;
       border-radius: 8px;
       cursor: pointer;
+      margin-top: 10px;
     }
 
     button:hover {
       background-color: #a477c4;
+    }
+
+    h3 {
+      margin-top: 40px;
+      margin-bottom: 10px;
+    }
+
+    #gallery {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-top: 10px;
     }
 
     #gallery img {
@@ -49,11 +82,12 @@
       margin: 8px;
       border-radius: 10px;
       object-fit: cover;
+      box-shadow: 0 1px 6px rgba(0,0,0,0.2);
     }
 
     a.back-button {
       display: inline-block;
-      margin-top: 20px;
+      margin-top: 30px;
       padding: 10px 20px;
       text-decoration: none;
       background: #d7bde2;
@@ -68,19 +102,23 @@
   </style>
 </head>
 <body>
-  <h1>🐾 Maxine's Page 🐾</h1>
+  <div class="overlay">
+    <h1 class="title">Maxine</h1>
+    <p class="intro">2008/02/24 • Female<br>
+    eat, sleep, poop, sleep, eat, drink water, sleep, eat, poop, sleep, eat, sleep…</p>
 
-  <img src="https://raw.githubusercontent.com/sihayaa/family-pets/main/maxine.jpg" alt="Maxine" class="profile">
-  <p>Maxine is our little queen 👑 — sweet but sassy! 🐶💜</p>
+    <img class="profile" src="https://raw.githubusercontent.com/sihayaa/family-pets/main/maxine.jpg" alt="Maxine">
 
-  <h3>📸 Upload a New Photo of Maxine</h3>
-  <input type="file" id="fileInput">
-  <button onclick="uploadPhoto()">Upload</button>
+    <h3>📸 Upload a New Photo of Maxine</h3>
+    <input type="file" id="fileInput">
+    <br>
+    <button onclick="uploadPhoto()">Upload</button>
 
-  <h3>🖼️ Gallery</h3>
-  <div id="gallery"></div>
+    <h3>🖼️ Gallery</h3>
+    <div id="gallery"></div>
 
-  <a class="back-button" href="index.html">← Back to Home</a>
+    <a class="back-button" href="index.html">← Back to Home</a>
+  </div>
 
   <script>
     const supabase = supabase.createClient(
