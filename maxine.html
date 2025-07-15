@@ -108,17 +108,28 @@
       color: #4b2354;
       margin-top: 8px;
     }
-
-    /* Additional CSS omitted for brevity, keep everything else unchanged */
   </style>
 </head>
 <body>
   <a href="index.html" class="back-button">← Back to Home</a>
   <h1>Maxine's Memories</h1>
   <p class="bio">2008/02/24 • Female<br>eat, sleep, poop, sleep, eat, drink water, sleep, eat, poop, sleep, eat, sleep…</p>
-  
-  <!-- Everything below remains unchanged from your latest version -->
-  <!-- Upload section, gallery div, lightbox div, and all JavaScript as already working -->
+
+  <div class="upload-section">
+    <label for="upload" class="custom-button">📷 Pick a Photo</label>
+    <input type="file" id="upload" accept="image/*" style="display:none">
+    <span class="file-name" id="fileName">No file chosen</span>
+    <input type="text" id="caption" placeholder="Maxine’s moment..." class="caption-input">
+    <button id="uploadBtn" class="custom-button">🧡 Save it</button>
+  </div>
+
+  <div class="gallery" id="gallery"></div>
+
+  <div class="lightbox" id="lightbox">
+    <div class="lightbox-inner" onclick="event.stopPropagation()">
+      <img id="lightbox-img" src="" alt="Preview">
+      <div id="lightbox-caption"></div>
+    </div>
+  </div>
 </body>
 </html>
-
