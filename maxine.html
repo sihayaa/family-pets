@@ -5,7 +5,8 @@
   <title>Maxine's Album</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script> 
+
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Freestyle+Script&family=Fredoka&display=swap" rel="stylesheet">
@@ -108,6 +109,46 @@
       color: #4b2354;
       margin-top: 8px;
     }
+
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 20px;
+      padding: 30px 10px;
+      justify-items: center;
+    }
+
+    .photo-block {
+      position: relative;
+      background: rgba(255, 255, 255, 0.95);
+      border: 3px solid #ffe5c4;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      padding: 10px;
+      width: 100%;
+      max-width: 240px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: move;
+    }
+
+    .photo-block img {
+      width: 100%;
+      height: 220px;
+      object-fit: contain;
+      border-radius: 8px;
+      background-color: #fff2e0;
+      cursor: pointer;
+    }
+
+    .photo-block p {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.1em;
+      color: #d1791b;
+      margin-top: 8px;
+      text-shadow: 0 1px 1px #fff;
+    }
   </style>
 </head>
 <body>
@@ -167,8 +208,28 @@
       } else {
         document.getElementById('caption').value = '';
         document.getElementById('fileName').innerText = 'No file chosen';
+        await refreshOrderIndices();
         loadGallery();
       }
+    }
+
+    async function refreshOrderIndices() {
+      const { data, error } = await supabase
+        .from(table)
+        .select('id')
+        .eq('dog_name', dogName)
+        .order('id');
+      if (error) return;
+      const updates = data.map((item, index) =>
+        supabase.from(table).update({ order_index: index }).eq('id', item.id)
+      );
+      await Promise.all(updates);
+    }
+
+    async function deletePhoto(id, filePath) {
+      await supabase.from(table).delete().eq('id', id);
+      await supabase.storage.from(bucket).remove([filePath]);
+      loadGallery();
     }
 
     async function loadGallery() {
@@ -190,12 +251,55 @@
         block.className = 'photo-block';
         block.setAttribute('data-id', item.id);
         block.innerHTML = `
-          <img src="${item.image_url}" alt="Memory">
+          <button class="delete-x" onclick="deletePhoto(${item.id}, '${item.file_path}')">✖</button>
+          <img src="${item.image_url}" onclick="showLightbox('${item.image_url}', \`${item.caption || ''}\`, ${item.id})">
           <p>${item.caption || ''}</p>
         `;
         gallery.appendChild(block);
       });
+
+      Sortable.create(gallery, {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        onEnd: async () => {
+          const newOrder = [...gallery.children].map((el, i) => ({ id: el.dataset.id, order_index: i }));
+          await Promise.all(newOrder.map(({ id, order_index }) =>
+            supabase.from(table).update({ order_index }).eq('id', id)
+          ));
+        }
+      });
     }
+
+    function showLightbox(src, caption, id) {
+      const cap = `
+        <span id="caption-text">${caption}</span>
+        <button id="editBtn" onclick="editCaption(${id})" style="margin-left: 8px; font-size: 0.6em;">✏️</button>
+        <br>
+        <input type="text" id="editInput" style="display:none;" value="${caption}">
+        <button id="saveBtn" onclick="saveCaption(${id})" style="display:none;">Save</button>
+      `;
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox-caption').innerHTML = cap;
+      document.getElementById('lightbox').style.display = 'flex';
+    }
+
+    function editCaption(id) {
+      document.getElementById('caption-text').style.display = 'none';
+      document.getElementById('editBtn').style.display = 'none';
+      document.getElementById('editInput').style.display = 'inline-block';
+      document.getElementById('saveBtn').style.display = 'inline-block';
+    }
+
+    async function saveCaption(id) {
+      const newCaption = document.getElementById('editInput').value;
+      await supabase.from(table).update({ caption: newCaption }).eq('id', id);
+      loadGallery();
+      document.getElementById('lightbox').style.display = 'none';
+    }
+
+    document.getElementById('lightbox').addEventListener('click', () => {
+      document.getElementById('lightbox').style.display = 'none';
+    });
 
     document.getElementById('uploadBtn').addEventListener('click', uploadPhoto);
     document.getElementById('upload').addEventListener('change', (e) => {
@@ -207,3 +311,4 @@
   </script>
 </body>
 </html>
+
