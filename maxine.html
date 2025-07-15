@@ -222,7 +222,141 @@
   </div>
 
   <script>
-    // unchanged script remains here...
+    const supabase = window.supabase.createClient(
+      'https://ceuapgdsrztwkstlsooa.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldWFwZ2Rzcnp0d2tzdGxzb29hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0MzgyOTMsImV4cCI6MjA2ODAxNDI5M30.tIiGVyEPw1WEUgBCtOnXIPU4mn7yJpZ7jiPXPmBjVY8'
+    );
+
+    const bucket = 'dog-photos';
+    const folder = 'maxine';
+    const table = 'dog_memories';
+    const dogName = 'maxine';
+
+    async function uploadPhoto() {
+      const file = document.getElementById('upload').files[0];
+      const caption = document.getElementById('caption').value;
+      if (!file) return;
+
+      const filePath = `${folder}/${Date.now()}_${file.name}`;
+      const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file);
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        return;
+      }
+
+      const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(filePath);
+      const imageUrl = urlData.publicUrl;
+
+      const { error: insertError } = await supabase
+        .from(table)
+        .insert([{ image_url: imageUrl, caption, file_path: filePath, dog_name: dogName }]);
+
+      if (insertError) {
+        console.error('Insert error:', insertError);
+      } else {
+        document.getElementById('caption').value = '';
+        document.getElementById('fileName').innerText = 'No file chosen';
+        await refreshOrderIndices();
+        loadGallery();
+      }
+    }
+
+    async function refreshOrderIndices() {
+      const { data, error } = await supabase
+        .from(table)
+        .select('id')
+        .eq('dog_name', dogName)
+        .order('id');
+      if (error) return;
+      const updates = data.map((item, index) =>
+        supabase.from(table).update({ order_index: index }).eq('id', item.id)
+      );
+      await Promise.all(updates);
+    }
+
+    async function deletePhoto(id, filePath) {
+      await supabase.from(table).delete().eq('id', id);
+      await supabase.storage.from(bucket).remove([filePath]);
+      loadGallery();
+    }
+
+    async function loadGallery() {
+      const { data, error } = await supabase
+        .from(table)
+        .select('*')
+        .eq('dog_name', dogName)
+        .order('order_index', { ascending: true });
+
+      const gallery = document.getElementById('gallery');
+      gallery.innerHTML = '';
+      if (error) {
+        console.error('Load error:', error);
+        return;
+      }
+
+      data.forEach(item => {
+        const block = document.createElement('div');
+        block.className = 'photo-block';
+        block.setAttribute('data-id', item.id);
+        block.innerHTML = `
+          <button class="delete-x" onclick="deletePhoto(${item.id}, '${item.file_path}')">✖</button>
+          <img src="${item.image_url}" onclick="showLightbox('${item.image_url}', \`${item.caption || ''}\`, ${item.id})">
+          <p>${item.caption || ''}</p>
+        `;
+        gallery.appendChild(block);
+      });
+
+      Sortable.create(gallery, {
+        animation: 150,
+        ghostClass: 'sortable-ghost',
+        onEnd: async () => {
+          const newOrder = [...gallery.children].map((el, i) => ({ id: el.dataset.id, order_index: i }));
+          await Promise.all(newOrder.map(({ id, order_index }) =>
+            supabase.from(table).update({ order_index }).eq('id', id)
+          ));
+        }
+      });
+    }
+
+    function showLightbox(src, caption, id) {
+      const cap = `
+        <span id="caption-text">${caption}</span>
+        <button id="editBtn" onclick="editCaption(${id})" style="margin-left: 8px; font-size: 0.6em;">✏️</button>
+        <br>
+        <input type="text" id="editInput" style="display:none;" value="${caption}">
+        <button id="saveBtn" onclick="saveCaption(${id})" style="display:none;">Save</button>
+      `;
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('lightbox-caption').innerHTML = cap;
+      document.getElementById('lightbox').style.display = 'flex';
+    }
+
+    function editCaption(id) {
+      document.getElementById('caption-text').style.display = 'none';
+      document.getElementById('editBtn').style.display = 'none';
+      document.getElementById('editInput').style.display = 'inline-block';
+      document.getElementById('saveBtn').style.display = 'inline-block';
+    }
+
+    async function saveCaption(id) {
+      const newCaption = document.getElementById('editInput').value;
+      await supabase.from(table).update({ caption: newCaption }).eq('id', id);
+      loadGallery();
+      document.getElementById('lightbox').style.display = 'none';
+    }
+
+    document.getElementById('uploadBtn').addEventListener('click', uploadPhoto);
+    document.getElementById('upload').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      document.getElementById('fileName').innerText = file ? file.name : 'No file chosen';
+    });
+
+    document.getElementById('lightbox').addEventListener('click', () => {
+      document.getElementById('lightbox').style.display = 'none';
+    });
+
+    loadGallery();
   </script>
 </body>
 </html>
+
