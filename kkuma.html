@@ -47,28 +47,86 @@
       left: 20px;
     }
     .back-button:hover { background: #ea7d99; }
-
-    /* The rest of the CSS remains the same, no changes needed */
-  </style>
-</head>
-<body>
-  <a href="index.html" class="back-button">← Back to Home</a>
-  <h1>Kuma's Memories</h1>
-  <p class="bio">2022/01/22<br>Ams, ams, ams,<br>The poor dog has only one egg!<br>He walks with pride, no shame at all,<br>Protecting that egg like it's billionaire heir!</p>
-
-  <!-- Upload, Gallery, and Scripts remain unchanged -->
-  <!-- Just make sure the bucket, folder, and dogName are correct in the script -->
-  <script>
-    const supabase = window.supabase.createClient(
-      'https://ceuapgdsrztwkstlsooa.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldWFwZ2Rzcnp0d2tzdGxzb29hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0MzgyOTMsImV4cCI6MjA2ODAxNDI5M30.tIiGVyEPw1WEUgBCtOnXIPU4mn7yJpZ7jiPXPmBjVY8'
-    );
-    const bucket = 'dog-photos';
-    const folder = 'kuma';
-    const table = 'dog_memories';
-    const dogName = 'kuma';
-
-    // (Keep the rest of your original JavaScript the same here.)
-  </script>
-</body>
-</html>
+    .upload-section {
+      margin-top: 40px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 10px;
+    }
+    .custom-button, .caption-input, .file-name {
+      font-family: 'Fredoka', sans-serif;
+    }
+    .custom-button {
+      font-size: 1.1em;
+      color: #fff4dd;
+      background: linear-gradient(to bottom, #cc6515, #a44800);
+      border: none;
+      border-radius: 40px;
+      padding: 10px 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .custom-button:hover {
+      box-shadow: 0 0 12px rgba(255, 145, 0, 0.7);
+    }
+    .caption-input {
+      font-size: 1.1em;
+      color: black;
+      background: white;
+      border: none;
+      border-radius: 40px;
+      padding: 10px 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .file-name {
+      font-size: 1em;
+      color: #4b2354;
+      margin-top: 8px;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 20px;
+      padding: 30px 10px;
+      justify-items: center;
+    }
+    .photo-block {
+      position: relative;
+      background: rgba(255, 255, 255, 0.95);
+      border: 3px solid #ffe5c4;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      padding: 10px;
+      width: 100%;
+      max-width: 240px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .photo-block img {
+      width: 100%;
+      height: 220px;
+      object-fit: contain;
+      border-radius: 8px;
+      background-color: #fff2e0;
+      cursor: pointer;
+    }
+    .photo-block p {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.1em;
+      color: #d1791b;
+      margin-top: 8px;
+      text-shadow: 0 1px 1px #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .photo-block .delete-x {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #ff
