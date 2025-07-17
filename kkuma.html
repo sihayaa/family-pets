@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kuma's Album</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Freestyle+Script&family=Fredoka&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://raw.githubusercontent.com/sihayaa/family-pets/refs/heads/main/kumabg.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #4b2354;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.4em;
+      margin-top: 60px;
+      font-family: 'Freestyle Script', cursive;
+      color: #F7CAC9;
+      text-shadow: 2px 2px 4px #00000050;
+    }
+    h1::after { content: ' 🐾'; }
+    .bio {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.1em;
+      margin-top: -10px;
+      margin-bottom: 20px;
+      color: #F7CAC9;
+    }
+    .back-button {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #f7a9bd;
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s ease;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+    }
+    .back-button:hover { background: #ea7d99; }
+
+    /* The rest of the CSS remains the same, no changes needed */
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-button">← Back to Home</a>
+  <h1>Kuma's Memories</h1>
+  <p class="bio">2022/01/22<br>Ams, ams, ams,<br>The poor dog has only one egg!<br>He walks with pride, no shame at all,<br>Protecting that egg like it's billionaire heir!</p>
+
+  <!-- Upload, Gallery, and Scripts remain unchanged -->
+  <!-- Just make sure the bucket, folder, and dogName are correct in the script -->
+  <script>
+    const supabase = window.supabase.createClient(
+      'https://ceuapgdsrztwkstlsooa.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldWFwZ2Rzcnp0d2tzdGxzb29hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0MzgyOTMsImV4cCI6MjA2ODAxNDI5M30.tIiGVyEPw1WEUgBCtOnXIPU4mn7yJpZ7jiPXPmBjVY8'
+    );
+    const bucket = 'dog-photos';
+    const folder = 'kuma';
+    const table = 'dog_memories';
+    const dogName = 'kuma';
+
+    // (Keep the rest of your original JavaScript the same here.)
+  </script>
+</body>
+</html>
