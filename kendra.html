@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Kendra's Album</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Freestyle+Script&family=Fredoka&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', sans-serif;
+      background: url('https://raw.githubusercontent.com/sihayaa/family-pets/refs/heads/main/kendra.jpg') no-repeat center center fixed;
+      background-size: cover;
+      color: #4b2354;
+      text-align: center;
+    }
+    h1 {
+      font-size: 2.4em;
+      margin-top: 60px;
+      font-family: 'Freestyle Script', cursive;
+      color: #B3CEE5;
+      text-shadow: 2px 2px 4px #00000050;
+    }
+    h1::after { content: ' 🐾'; }
+    .bio {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.1em;
+      margin-top: -10px;
+      margin-bottom: 20px;
+      color: #B3CEE5;
+      white-space: pre-line;
+    }
+    .back-button {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 10px 20px;
+      background: #b3cee5;
+      color: white;
+      border-radius: 10px;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s ease;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+    }
+    .back-button:hover { background: #96b3cc; }
+    .upload-section {
+      margin-top: 40px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 10px;
+      padding: 0 10px;
+    }
+    .custom-button, .caption-input, .file-name {
+      font-family: 'Fredoka', sans-serif;
+    }
+    .custom-button {
+      font-size: 1.1em;
+      color: #fff4dd;
+      background: linear-gradient(to bottom, #7fa7c2, #5d85a5);
+      border: none;
+      border-radius: 40px;
+      padding: 10px 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+    .custom-button:hover {
+      box-shadow: 0 0 12px rgba(179, 206, 229, 0.8);
+    }
+    .caption-input {
+      font-size: 1.1em;
+      color: black;
+      background: white;
+      border: none;
+      border-radius: 40px;
+      padding: 10px 25px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    .file-name {
+      font-size: 1em;
+      color: #4b2354;
+      margin-top: 8px;
+    }
+    .gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 20px;
+      padding: 30px 10px;
+      justify-items: center;
+    }
+    .photo-block {
+      position: relative;
+      background: rgba(255, 255, 255, 0.95);
+      border: 3px solid #cbe2f2;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      padding: 10px;
+      width: 100%;
+      max-width: 240px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .photo-block img {
+      width: 100%;
+      height: 220px;
+      object-fit: contain;
+      border-radius: 8px;
+      background-color: #ecf6fc;
+      cursor: pointer;
+    }
+    .photo-block p {
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.1em;
+      color: #B3CEE5;
+      margin-top: 8px;
+      text-shadow: 0 1px 1px #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+    .photo-block .delete-x {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: #ffe3e3;
+      color: #8c0e0e;
+      border: none;
+      border-radius: 50%;
+      padding: 4px 8px;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 10;
+    }
+    .lightbox {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+      color: #fff;
+    }
+    .lightbox img {
+      max-width: 90%;
+      max-height: 70vh;
+      margin-bottom: 20px;
+    }
+    .lightbox-caption {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    #editInput {
+      font-family: 'Fredoka', sans-serif;
+      border-radius: 10px;
+      padding: 6px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+    }
+    #saveBtn {
+      background: #B3CEE5;
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-family: 'Fredoka';
+      cursor: pointer;
+    }
+    .lightbox-close {
+      position: absolute;
+      top: 10px;
+      right: 20px;
+      font-size: 2em;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <a href="index.html" class="back-button">← Back to Home</a>
+  <h1>Kendra</h1>
+  <p class="bio">2017/09/28  
+I got bark-ality, got scratch-ality inside my DNA.  
+I got eat-ality, got nap-ality inside my DNA.  
+I’m small but mighty, don’t play with me, okay?  
+I’m Kendra Lamar, Shih Tzu royalty all day.</p>
+
+  <div class="upload-section">
+    <label for="upload" class="custom-button">📷 Pick a Photo</label>
+    <input type="file" id="upload" accept="image/*" style="display:none">
+    <span class="file-name" id="fileName">No file chosen</span>
+    <input type="text" id="caption" placeholder="Kendra’s moment..." class="caption-input">
+    <button id="uploadBtn" class="custom-button">🩵 Save it</button>
+  </div>
+
+  <div class="gallery" id="gallery"></div>
+
+  <div class="lightbox" id="lightbox">
+    <span class="lightbox-close" onclick="document.getElementById('lightbox').style.display='none'">×</span>
+    <img id="lightbox-img" src="" alt="Preview">
+    <div class="lightbox-caption">
+      <span id="caption-text"></span>
+      <input type="text" id="editInput" style="display:none;">
+      <button id="saveBtn" style="display:none;">Save</button>
+      <button id="editBtn">✏️</button>
+    </div>
+  </div>
+
+  <script>
+    const supabase = window.supabase.createClient(
+      'https://ceuapgdsrztwkstlsooa.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImNldWFwZ2Rzcnp0d2tzdGxzb29hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI0MzgyOTMsImV4cCI6MjA2ODAxNDI5M30.tIiGVyEPw1WEUgBCtOnXIPU4mn7yJpZ7jiPXPmBjVY8'
+    );
+    const bucket = 'dog-photos';
+    const folder = 'kendra';
+    const table = 'dog_memories';
+    const dogName = 'kendra';
+    let currentEditId = null;
+
+    async function uploadPhoto() {
+      const file = document.getElementById('upload').files[0];
+      const caption = document.getElementById('caption').value;
+      if (!file) return;
+      const filePath = `${folder}/${Date.now()}_${file.name}`;
+      const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file);
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        return;
+      }
+      const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(filePath);
+      const imageUrl = urlData.publicUrl;
+      const { error: insertError } = await supabase.from(table).insert([
+        { image_url: imageUrl, caption, file_path: filePath, dog_name: dogName }
+      ]);
+      if (insertError) {
+        console.error('Insert error:', insertError);
+      } else {
+        document.getElementById('caption').value = '';
+        document.getElementById('fileName').innerText = 'No file chosen';
+        loadGallery();
+      }
+    }
+
+    async function deletePhoto(id, filePath) {
+      await supabase.from(table).delete().eq('id', id);
+      await supabase.storage.from(bucket).remove([filePath]);
+      loadGallery();
+    }
+
+    async function loadGallery() {
+      const { data, error } = await supabase.from(table).select('*').eq('dog_name', dogName);
+      const gallery = document.getElementById('gallery');
+      gallery.innerHTML = '';
+      if (error) {
+        console.error('Load error:', error);
+        return;
+      }
+      data.forEach(item => {
+        const block = document.createElement('div');
+        block.className = 'photo-block';
+        block.innerHTML = `
+          <button class="delete-x" onclick="deletePhoto(${item.id}, '${item.file_path}')">✖</button>
+          <img src="${item.image_url}" alt="Memory" onclick="showLightbox('${item.image_url}', \`${item.caption || ''}\`, ${item.id})">
+          <p>${item.caption || ''}</p>
+        `;
+        gallery.appendChild(block);
+      });
+    }
+
+    function showLightbox(src, caption, id) {
+      currentEditId = id;
+      document.getElementById('lightbox-img').src = src;
+      document.getElementById('caption-text').innerText = caption;
+      document.getElementById('editInput').value = caption;
+      document.getElementById('editInput').style.display = 'none';
+      document.getElementById('saveBtn').style.display = 'none';
+      document.getElementById('editBtn').style.display = 'inline-block';
+      document.getElementById('caption-text').style.display = 'inline-block';
+      document.getElementById('lightbox').style.display = 'flex';
+    }
+
+    document.getElementById('editBtn').addEventListener('click', () => {
+      document.getElementById('caption-text').style.display = 'none';
+      document.getElementById('editBtn').style.display = 'none';
+      document.getElementById('editInput').style.display = 'inline-block';
+      document.getElementById('saveBtn').style.display = 'inline-block';
+    });
+
+    document.getElementById('saveBtn').addEventListener('click', async () => {
+      const newCaption = document.getElementById('editInput').value;
+      await supabase.from(table).update({ caption: newCaption }).eq('id', currentEditId);
+      document.getElementById('caption-text').innerText = newCaption;
+      document.getElementById('editInput').style.display = 'none';
+      document.getElementById('saveBtn').style.display = 'none';
+      document.getElementById('editBtn').style.display = 'inline-block';
+      document.getElementById('caption-text').style.display = 'inline-block';
+    });
+
+    document.getElementById('lightbox').addEventListener('click', (e) => {
+      if (e.target.id === 'lightbox') {
+        document.getElementById('lightbox').style.display = 'none';
+        document.getElementById('editInput').style.display = 'none';
+        document.getElementById('saveBtn').style.display = 'none';
+        document.getElementById('editBtn').style.display = 'inline-block';
+        document.getElementById('caption-text').style.display = 'inline-block';
+      }
+    });
+
+    document.getElementById('uploadBtn').addEventListener('click', uploadPhoto);
+    document.getElementById('upload').addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      document.getElementById('fileName').innerText = file ? file.name : 'No file chosen';
+    });
+
+    loadGallery();
+  </script>
+</body>
+</html>
