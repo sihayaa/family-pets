@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Inka's Album</title>
+  <title>Inka's World</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
@@ -126,6 +126,13 @@
       justify-content: center;
       gap: 5px;
     }
+    .photo-date {
+      font-size: 0.75em;
+      color: #888;
+      align-self: flex-end;
+      margin-right: 8px;
+      margin-top: 4px;
+    }
     .photo-block .delete-x {
       position: absolute;
       top: 8px;
@@ -233,6 +240,7 @@ baby drama queen, oreo dog</p>
       const caption = document.getElementById('caption').value;
       if (!file) return;
       const filePath = `${folder}/${Date.now()}_${file.name}`;
+      const uploadDate = new Date().toISOString();
       const { error: uploadError } = await supabase.storage.from(bucket).upload(filePath, file);
       if (uploadError) {
         console.error('Upload error:', uploadError);
@@ -241,7 +249,7 @@ baby drama queen, oreo dog</p>
       const { data: urlData } = supabase.storage.from(bucket).getPublicUrl(filePath);
       const imageUrl = urlData.publicUrl;
       const { error: insertError } = await supabase.from(table).insert([
-        { image_url: imageUrl, caption, file_path: filePath, dog_name: dogName }
+        { image_url: imageUrl, caption, file_path: filePath, dog_name: dogName, upload_date: uploadDate }
       ]);
       if (insertError) {
         console.error('Insert error:', insertError);
@@ -267,12 +275,14 @@ baby drama queen, oreo dog</p>
         return;
       }
       data.forEach(item => {
+        const formattedDate = item.upload_date ? new Date(item.upload_date).toLocaleDateString() : '';
         const block = document.createElement('div');
         block.className = 'photo-block';
         block.innerHTML = `
           <button class="delete-x" onclick="deletePhoto(${item.id}, '${item.file_path}')">✖</button>
           <img src="${item.image_url}" alt="Memory" onclick="showLightbox('${item.image_url}', \`${item.caption || ''}\`, ${item.id})">
           <p>${item.caption || ''}</p>
+          <div class="photo-date">${formattedDate}</div>
         `;
         gallery.appendChild(block);
       });
