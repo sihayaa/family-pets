@@ -2,16 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Our Dogs</title>
+  <title>Our Dogs</n>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap');
-    @import url('https://fonts.googleapis.com/css2?family=Jumble&display=swap');
+    /* Self-hosted Jumble font */
+    @font-face {
+      font-family: 'Jumble';
+      src: url('fonts/Jumble-Regular.ttf') format('truetype');
+      font-weight: normal;
+      font-style: normal;
+    }
 
     body {
       margin: 0;
       padding: 40px;
       font-family: 'Patrick Hand', cursive;
-      /* Background settings */
       background: linear-gradient(135deg, #fff4fb, #e0f7fa);
       background-image: url('https://raw.githubusercontent.com/sihayaa/family-pets/refs/heads/main/hompage.png');
       background-size: cover;
@@ -25,9 +30,7 @@
       font-family: 'Jumble', cursive;
       font-size: 3em;
       color: #edd651;
-      /* White outline via text-stroke */
       -webkit-text-stroke: 2px #ffffff;
-      /* Fallback outline via multiple text-shadows */
       text-shadow:
         -1px -1px 0 #fff,
          1px -1px 0 #fff,
@@ -69,10 +72,17 @@
     .icon p {
       margin-top: 8px;
       font-family: 'Jumble', cursive;
-      font-size: 1.2em;
+      font-size: 1.3em;
+      font-weight: bold;
       text-transform: uppercase;
       color: #edd651;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+      /* White stroke for thicker look */
+      -webkit-text-stroke: 1px #ffffff;
+      text-shadow:
+        -1px -1px 0 #fff,
+         1px -1px 0 #fff,
+        -1px  1px 0 #fff,
+         1px  1px 0 #fff;
     }
 
     footer {
@@ -104,3 +114,4 @@
   </footer>
 </body>
 </html>
+
